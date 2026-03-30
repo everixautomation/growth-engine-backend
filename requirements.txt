@@ -1,0 +1,8 @@
+flask
+flask-cors
+gunicorn
+openai
+google-auth
+google-api-python-client
+pytz
+qrcode[pil]
