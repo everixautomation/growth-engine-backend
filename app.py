@@ -3,7 +3,8 @@ from flask_cors import CORS
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from openai import OpenAI
-import os, json, datetime, pytz, qrcode, io, base64
+import os, json, datetime, pytz, qrcode, io, base64, smtplib
+from email.mime.text import MIMEText
 
 app = Flask(__name__)
 CORS(app)
@@ -40,6 +41,21 @@ def get_openai():
         _openai_client = OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))
     return _openai_client
 
+# ── EMAIL ALERT ───────────────────────────────────────────────────────────────
+def send_alert_email(to, subject, body):
+    gmail_user = os.environ.get('GMAIL_USER')
+    gmail_pass = os.environ.get('GMAIL_APP_PASSWORD')
+    if not gmail_user or not gmail_pass:
+        print("Email alert skipped: GMAIL_USER or GMAIL_APP_PASSWORD not set")
+        return
+    msg = MIMEText(body)
+    msg['Subject'] = subject
+    msg['From']    = gmail_user
+    msg['To']      = to
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+        smtp.login(gmail_user, gmail_pass)
+        smtp.sendmail(gmail_user, to, msg.as_string())
+
 # ── ROUTES ────────────────────────────────────────────────────────────────────
 
 @app.route('/feedback', methods=['POST'])
@@ -68,6 +84,23 @@ def submit_feedback():
         print(f"Sheets error: {e}")
 
     is_happy = rating >= 4
+
+    if not is_happy:
+        try:
+            send_alert_email(
+                to=client['owner_email'],
+                subject=f"⚠️ {rating}★ Review — {client['name']}",
+                body=(
+                    f"A {rating}-star review was submitted.\n\n"
+                    f"Name:     {name or 'Anonymous'}\n"
+                    f"Source:   {source}\n"
+                    f"Feedback: {feedback or '(no comment left)'}\n\n"
+                    f"Timestamp: {timestamp}"
+                )
+            )
+        except Exception as e:
+            print(f"Email alert error: {e}")
+
     return jsonify({
         'status': 'ok',
         'happy': is_happy,
@@ -100,7 +133,7 @@ Extra notes: {notes}
 Return a JSON object with:
 - subject: compelling subject line under 50 characters
 - preview: preview text under 90 characters
-- body: full plain text email body, 150-200 words, warm and engaging with a clear call to action
+- body: short plain text email body, exactly 2 paragraphs, under 80 words total. Warm, direct reminder — no fluff. End with a clear one-line call to action.
 
 Do not include placeholders. Write it as if ready to send."""
 
