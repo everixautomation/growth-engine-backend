@@ -27,7 +27,7 @@ CLIENTS = {
     'enoteca_rossio': {
         'name': 'Enoteca Rossio',
         'spreadsheet_id': '1oN09HIGaxDa776e3hSVrQqYSMjXIzosDj3y5as1iuuw',
-        'google_review_url': 'https://www.google.com/search?q=Enoteca+Rossio+Reviews#lrd=0x882b35346e18b64f:0xc5763de939138646,3,,,,',
+        'google_review_url': 'https://search.google.com/local/writereview?placeid=ChIJT7YYbjQ1K4gRRoYTOek9dsU',
         'owner_email': 'everixautomation@gmail.com'
     }
 }
