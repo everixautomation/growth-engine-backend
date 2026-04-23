@@ -23,6 +23,12 @@ CLIENTS = {
         'spreadsheet_id': '1u9uBqjwCGhdTnXajI1da8WZZFmwIUHjYDAN1TTmkKrY',
         'google_review_url': 'https://g.page/r/PLACEHOLDER/review',
         'owner_email': 'everixautomation@gmail.com'
+    },
+    'enoteca_rossio': {
+        'name': 'Enoteca Rossio',
+        'spreadsheet_id': '1oN09HIGaxDa776e3hSVrQqYSMjXIzosDj3y5as1iuuw',
+        'google_review_url': 'https://www.google.com/maps/place/Enoteca+Rossio/@43.6661417,-79.4524444,17z/data=!4m8!3m7!1s0x882b35346e18b64f:0xc5763de939138646!8m2!3d43.6661417!4d-79.4498695!9m1!1b1!16s%2Fg%2F11n3qf3b2l?entry=ttu',
+        'owner_email': 'everixautomation@gmail.com'
     }
 }
 
@@ -78,7 +84,7 @@ def submit_feedback():
             spreadsheetId=sheet_id,
             range='Reviews!A:F',
             valueInputOption='RAW',
-            body={'values': [[timestamp, name, email, rating, feedback, source]]}
+            body={'values': [[name, email, timestamp, rating, feedback, source]]}
         ).execute()
     except Exception as e:
         print(f"Sheets error: {e}")
