@@ -82,7 +82,7 @@ def submit_feedback():
         svc = get_sheets()
         svc.spreadsheets().values().append(
             spreadsheetId=sheet_id,
-            range='Reviews!A:F',
+            range='Reviews!A1',
             valueInputOption='RAW',
             body={'values': [[name, email, timestamp, rating, feedback, source]]}
         ).execute()
